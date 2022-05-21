@@ -1,4 +1,5 @@
 import { GetStaticProps } from 'next';
+import { FiCalendar, FiUser} from 'react-icons/fi';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -24,9 +25,17 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-// export default function Home() {
-//   // TODO
-// }
+export default function Home() {
+  return(
+    <main className={styles.container}>
+      <h1>Insira título aqui</h1>
+      <p>Aqui está uma descrição sobre o assunto que será abordado</p>
+      <section>
+        <span><FiCalendar/> 14 fev 2001</span> <span><FiUser/> Warlike Richard</span>
+      </section>
+    </main>
+  )
+}
 
 // export const getStaticProps = async () => {
 //   // const prismic = getPrismicClient({});
