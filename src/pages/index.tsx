@@ -1,4 +1,5 @@
 import { GetStaticProps } from 'next';
+import { useEffect, useState } from 'react';
 import { FiCalendar, FiUser} from 'react-icons/fi';
 
 import { getPrismicClient } from '../services/prismic';
@@ -17,7 +18,7 @@ interface Post {
 }
 
 interface PostPagination {
-  next_page: string;
+  next_page: string | null;
   results: Post[];
 }
 
@@ -25,21 +26,99 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home() {
-  return(
-    <main className={styles.container}>
-      <h1>Insira título aqui</h1>
-      <p>Aqui está uma descrição sobre o assunto que será abordado</p>
-      <section>
-        <span><FiCalendar/> 14 fev 2001</span> <span><FiUser/> Warlike Richard</span>
-      </section>
-    </main>
+export default function Home({postsPagination} : HomeProps) {
+  const {results} = postsPagination;
+  const [allPages, setAllPages] : [PostPagination, any] = useState(postsPagination);
+  const [newPage, setNewPage] : [PostPagination, any] = useState(postsPagination)
+  const {next_page} = allPages
+
+  useEffect(() =>{
+
+    const results_all = allPages.results;
+    setAllPages({next_page: newPage.next_page, results: results_all.concat(newPage.results)});
+    console.log('all pages: ', allPages)
+
+  }, [newPage])
+
+  useEffect(() =>{
+    setAllPages({next_page: postsPagination.next_page, results: results});
+  }, [])
+
+  return next_page ? (
+    <>
+      {
+        allPages.results.map((post) => {
+          return(
+            <main className={styles.container} key={post.uid}>
+              <h1>{post.data.title}</h1>
+              <p>{post.data.subtitle}</p>
+              <section>
+                <span><FiCalendar className={styles.icon} size={20}/> {post.first_publication_date}</span> <span><FiUser className={styles.icon} size={20}/> {post.data.author}</span>
+              </section>
+            </main>
+          )
+        })
+      }
+      <main className={styles.container}>
+        <p onClick={() => handleLoadMore(next_page, setNewPage)}>Carregar mais</p>
+      </main>
+    </>
+  ) : (
+    <>
+      {
+        allPages.results.map((post) => {
+          return(
+            <main className={styles.container} key={post.uid}>
+              <h1>{post.data.title}</h1>
+              <p>{post.data.subtitle}</p>
+              <section>
+                <span><FiCalendar className={styles.icon} size={20}/> {post.first_publication_date}</span> <span><FiUser className={styles.icon} size={20}/> {post.data.author}</span>
+              </section>
+            </main>
+          )
+        })
+      }
+    </>
   )
 }
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient({});
-//   // const postsResponse = await prismic.getByType(TODO);
+//Tarefa: Formatar a data (Incluindo no handleLoadMore)
 
-//   // TODO
-// };
+export const getStaticProps = async () => {
+    const prismic = getPrismicClient({});
+    const postsResponse = await prismic.getByType('post', {
+      page: 1,
+      pageSize: 2,
+    });
+
+    const results = postsResponse.results.map(post => {
+      return{
+        uid: post.uid,
+            first_publication_date: post.first_publication_date,
+            data: {
+              title: post.data.title,
+              subtitle: post.data.subtitle,
+              author: post.data.author,
+            },
+      }
+    })
+
+    return{
+      props:{
+        postsPagination:{
+          next_page: postsResponse.next_page,
+          results,
+        },
+        revalidade: 60*30 //30 minutes
+      },
+    }
+
+};
+
+async function handleLoadMore(next_page: string, setNewPage: any){
+  const result = await fetch(next_page).then(function(response){
+    return response.json();
+  })
+
+  setNewPage(result);
+}
