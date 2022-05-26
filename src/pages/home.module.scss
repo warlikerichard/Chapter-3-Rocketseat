@@ -1,9 +1,11 @@
 // TODO
 
-.container{
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 3rem 4.5rem 3rem;
+.post{
+    display: block;
+
+    & + div{
+        margin-top: 2.5rem;
+    }
 
     h1{
         font-weight: bold;
@@ -12,23 +14,10 @@
     }
 
     p{
-        transition: font-size 0.05s;
         display: inline-block;
         font-weight: 400;
         font-size: 1.125rem;
         line-height: 1.5rem;
-
-        &:first-child{
-            color: var(--highlight);
-
-            &:hover{
-                text-decoration: underline;
-                transition: font-size 0.2s;
-                font-size: 1.25rem;
-                cursor: pointer;
-            }
-            
-        }
     }
 
     section{
@@ -54,6 +43,20 @@
     }
 }
 
-.icon{
-    margin-right: 0.5rem;
+.load{
+    p{
+        color: var(--highlight);
+        transition: font-size 0.05s;
+        display: inline-block;
+        font-weight: 400;
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+
+        &:hover{
+            text-decoration: underline;
+            transition: font-size 0.2s;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+    }
 }
