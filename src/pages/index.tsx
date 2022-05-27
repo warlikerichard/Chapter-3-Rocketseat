@@ -1,6 +1,7 @@
 import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { FiCalendar, FiUser} from 'react-icons/fi';
+import { GiSadCrab } from 'react-icons/gi';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -96,6 +97,11 @@ export default function Home({postsPagination} : HomeProps) {
           )
         })
       }
+
+      <div className={styles.noContent}>
+        <GiSadCrab size={40} className={styles.crab}/> Ops! Parece que você chegou ao fim da lista!
+      </div>
+      
     </main>
 
   )
@@ -108,6 +114,10 @@ export const getStaticProps : GetStaticProps = async () => {
     const postsResponse = await prismic.getByType('post', {
       page: 1,
       pageSize: 2,
+      orderings: {
+        field: 'document.first_publication_date',
+        direction: 'desc'
+      },
     });
 
     const results = postsResponse.results.map(post => {
@@ -141,9 +151,30 @@ export const getStaticProps : GetStaticProps = async () => {
 };
 
 async function handleLoadMore(next_page: string, setNewPage: any){
-  const result = await fetch(next_page).then(function(response){
+  const response = await fetch(next_page).then(function(response){
     return response.json();
   })
 
-  setNewPage(result);
+  const results = response.results.map(post => {
+    return{
+      uid: post.uid,
+          first_publication_date: format(
+            new Date(post.first_publication_date),
+            "dd 'de' MMMM 'de' yyyy",
+            {
+              locale: ptBR
+            }
+          ),
+          data: {
+            title: post.data.title,
+            subtitle: post.data.subtitle,
+            author: post.data.author,
+          },
+    }
+  })
+
+  setNewPage({
+    next_page: response.next_page,
+    results
+  });
 }

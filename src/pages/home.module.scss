@@ -60,3 +60,12 @@
         }
     }
 }
+
+.noContent{
+    display: inline-flex;
+    align-items: center;
+    color: var(--highlight);
+    .crab{
+        margin-right: 0.5rem;
+    }
+}
