@@ -8,7 +8,7 @@ import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
 import { GiSadCrab } from 'react-icons/gi';
-import { FiCalendar, FiUser } from 'react-icons/fi';
+import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { ptBR } from 'date-fns/locale';
 import { format } from 'date-fns';
 
@@ -36,6 +36,15 @@ interface PostProps {
 export default function Post({post} : PostProps) {
   const router = useRouter();
 
+  const averageWords = post.data.content.reduce(
+    (counter, content) => {
+      const words = RichText.asText(content.body).split(" ").concat(content.heading.split(" "))
+      return counter + words.length;
+    }, 0)/200
+
+    const averageReadingTime = Math.round(averageWords) < averageWords ? 
+    Math.round(averageWords) + 1 : Math.round(averageWords);
+
   return !router.isFallback ? (
 
     <div>
@@ -51,6 +60,10 @@ export default function Post({post} : PostProps) {
 
           <span>
             <FiUser className={commonStyles.icon} size={20}/> {post.data.author}
+          </span>
+
+          <span>
+            <FiClock className={commonStyles.icon} size={20}/> {averageReadingTime} min
           </span>
         </section>
 
