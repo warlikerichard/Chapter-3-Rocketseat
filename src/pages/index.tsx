@@ -2,6 +2,7 @@ import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { FiCalendar, FiUser} from 'react-icons/fi';
 import { GiSadCrab } from 'react-icons/gi';
+import Link from 'next/Link';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -54,19 +55,21 @@ export default function Home({postsPagination} : HomeProps) {
       {
         allPages.results.map((post) => {
           return(
-            <div className={styles.post} key={post.uid}>
-              <h1>{post.data.title}</h1>
-              <p>{post.data.subtitle}</p>
-              <section>
-                <span>
-                  <FiCalendar className={commonStyles.icon} size={20}/> {post.first_publication_date}
+            <Link href={`/post/${post.uid}`}>
+              <div className={styles.post} key={post.uid}>
+                <h1>{post.data.title}</h1>
+                <p>{post.data.subtitle}</p>
+                <section>
+                  <span>
+                    <FiCalendar className={commonStyles.icon} size={20}/> {post.first_publication_date}
                   </span> 
 
                   <span>
                     <FiUser className={commonStyles.icon} size={20}/> {post.data.author}
                   </span>
-              </section>
-            </div>
+                </section>
+              </div>
+            </Link>
           )
         })
       }
@@ -81,19 +84,21 @@ export default function Home({postsPagination} : HomeProps) {
       {
         allPages.results.map((post) => {
           return(
-            <div className={styles.post} key={post.uid}>
-              <h1>{post.data.title}</h1>
-              <p>{post.data.subtitle}</p>
-              <section>
-                <span><FiCalendar className={commonStyles.icon} size={20}/>
-                 {post.first_publication_date}
-                </span>
+            <Link href={`/post/${post.uid}`}>
+              <div className={styles.post} key={post.uid}>
+                <h1>{post.data.title}</h1>
+                <p>{post.data.subtitle}</p>
+                <section>
+                  <span><FiCalendar className={commonStyles.icon} size={20}/>
+                  {post.first_publication_date}
+                  </span>
 
-                 <span><FiUser className={commonStyles.icon} size={20}/>
-                  {post.data.author}
-                 </span>
-              </section>
-            </div>
+                  <span><FiUser className={commonStyles.icon} size={20}/>
+                    {post.data.author}
+                  </span>
+                </section>
+              </div>
+            </Link>
           )
         })
       }
@@ -106,8 +111,6 @@ export default function Home({postsPagination} : HomeProps) {
 
   )
 }
-
-//Tarefa: Formatar a data (Incluindo no handleLoadMore)
 
 export const getStaticProps : GetStaticProps = async () => {
     const prismic = getPrismicClient({});
@@ -122,19 +125,19 @@ export const getStaticProps : GetStaticProps = async () => {
 
     const results = postsResponse.results.map(post => {
       return{
-        uid: post.uid,
-            first_publication_date: format(
-              new Date(post.first_publication_date),
-              "dd 'de' MMMM 'de' yyyy",
-              {
-                locale: ptBR
-              }
-            ),
-            data: {
-              title: post.data.title,
-              subtitle: post.data.subtitle,
-              author: post.data.author,
-            },
+          uid: post.uid,
+          first_publication_date: format(
+            new Date(post.first_publication_date),
+            "dd 'de' MMMM 'de' yyyy",
+            {
+              locale: ptBR
+            }
+          ),
+          data: {
+            title: post.data.title,
+            subtitle: post.data.subtitle,
+            author: post.data.author,
+          },
       }
     })
 
