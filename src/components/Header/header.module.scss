@@ -7,18 +7,14 @@
     padding: 0 3rem;
 
     @media(max-width: 1080px){
-        a{
             img{
                 width: 240px
             }
-        }
     }
 
     @media(max-width: 720px){
-        a{
             img{
                 width: 180px;
             }
-        }
     }
 }

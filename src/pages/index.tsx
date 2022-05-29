@@ -2,7 +2,7 @@ import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { FiCalendar, FiUser} from 'react-icons/fi';
 import { GiSadCrab } from 'react-icons/gi';
-import Link from 'next/Link';
+import Link from 'next/link';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -41,7 +41,6 @@ export default function Home({postsPagination} : HomeProps) {
 
     const results_all = allPages.results;
     setAllPages({next_page: newPage.next_page, results: results_all.concat(newPage.results)});
-    console.log('all pages: ', allPages)
 
   }, [newPage])
 
@@ -55,13 +54,19 @@ export default function Home({postsPagination} : HomeProps) {
       {
         allPages.results.map((post) => {
           return(
-            <Link href={`/post/${post.uid}`}>
+            <Link href={`/post/${post.uid}`} key={post.uid}>
               <div className={styles.post} key={post.uid}>
                 <h1>{post.data.title}</h1>
                 <p>{post.data.subtitle}</p>
                 <section>
                   <span>
-                    <FiCalendar className={commonStyles.icon} size={20}/> {post.first_publication_date}
+                    <FiCalendar className={commonStyles.icon} size={20}/> {format(
+                      new Date(post.first_publication_date),
+                      "dd MMM yyyy",
+                      {
+                        locale: ptBR
+                      }
+                    )}
                   </span> 
 
                   <span>
@@ -74,7 +79,7 @@ export default function Home({postsPagination} : HomeProps) {
         })
       }
       <div className={styles.load}>
-        <p onClick={() => handleLoadMore(next_page, setNewPage)}>Carregar mais</p>
+        <p onClick={() => handleLoadMore(next_page, setNewPage)}>Carregar mais posts</p>
       </div>
     </main>
 
@@ -84,7 +89,7 @@ export default function Home({postsPagination} : HomeProps) {
       {
         allPages.results.map((post) => {
           return(
-            <Link href={`/post/${post.uid}`}>
+            <Link href={`/post/${post.uid}`} key={post.uid}>
               <div className={styles.post} key={post.uid}>
                 <h1>{post.data.title}</h1>
                 <p>{post.data.subtitle}</p>
@@ -126,13 +131,7 @@ export const getStaticProps : GetStaticProps = async () => {
     const results = postsResponse.results.map(post => {
       return{
           uid: post.uid,
-          first_publication_date: format(
-            new Date(post.first_publication_date),
-            "dd 'de' MMMM 'de' yyyy",
-            {
-              locale: ptBR
-            }
-          ),
+          first_publication_date: post.first_publication_date,
           data: {
             title: post.data.title,
             subtitle: post.data.subtitle,
@@ -161,18 +160,12 @@ async function handleLoadMore(next_page: string, setNewPage: any){
   const results = response.results.map(post => {
     return{
       uid: post.uid,
-          first_publication_date: format(
-            new Date(post.first_publication_date),
-            "dd 'de' MMMM 'de' yyyy",
-            {
-              locale: ptBR
-            }
-          ),
-          data: {
-            title: post.data.title,
-            subtitle: post.data.subtitle,
-            author: post.data.author,
-          },
+      first_publication_date: post.first_publication_date,
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author,
+      },
     }
   })
 

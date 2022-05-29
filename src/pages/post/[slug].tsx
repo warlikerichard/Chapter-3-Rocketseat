@@ -36,14 +36,22 @@ interface PostProps {
 export default function Post({post} : PostProps) {
   const router = useRouter();
 
-  const averageWords = post.data.content.reduce(
-    (counter, content) => {
-      const words = RichText.asText(content.body).split(" ").concat(content.heading.split(" "))
-      return counter + words.length;
-    }, 0)/200
+  //Colocar isso em um try catch
 
-    const averageReadingTime = Math.round(averageWords) < averageWords ? 
-    Math.round(averageWords) + 1 : Math.round(averageWords);
+  let averageReadingTime = '';
+  try{
+    const averageWords = post.data.content.reduce(
+      (counter, content) => {
+        const words = RichText.asText(content.body).split(" ").concat(content.heading.split(" "))
+        return counter + words.length;
+      }, 0)/200
+  
+      averageReadingTime = Math.round(averageWords) < averageWords ? 
+      (Math.round(averageWords) + 1).toString() : Math.round(averageWords).toString();
+  }
+  catch{
+    averageReadingTime = 'loading...'
+  }
 
   return !router.isFallback ? (
 
@@ -55,7 +63,13 @@ export default function Post({post} : PostProps) {
         <h1 className={styles.bigTitle}>{post.data.title}</h1>
         <section className={styles.informations}>
           <span>
-            <FiCalendar className={commonStyles.icon} size={20}/> {post.first_publication_date}
+            <FiCalendar className={commonStyles.icon} size={20}/> {format(
+              new Date(post.first_publication_date),
+              "dd MMM yyyy",
+              {
+                locale: ptBR,
+              }
+            )}
           </span> 
 
           <span>
@@ -69,11 +83,12 @@ export default function Post({post} : PostProps) {
 
         <main className={styles.content}>
           {post.data.content.map(section => {
+            let r = (Math.random() + 1).toString(36).substring(7);
             return(
-              <>
+              <div key={r}>
                 <h1>{section.heading}</h1>
                 <div dangerouslySetInnerHTML={{__html: RichText.asHtml(section.body)}}/>
-              </>
+              </div>
             )
           })}
         </main>
@@ -84,7 +99,7 @@ export default function Post({post} : PostProps) {
 
       <main className={commonStyles.container}>
         <div className={styles.loading}>
-          <GiSadCrab size={65} className={commonStyles.icon} color='#FF57B2'/> Loading...
+          <GiSadCrab size={65} className={commonStyles.icon} color='#FF57B2'/> Carregando...
         </div>
     </main>
 
@@ -114,16 +129,10 @@ export const getStaticPaths : GetStaticPaths = async () => {
 export const getStaticProps : GetStaticProps = async ({params}) => {
   const prismic = getPrismicClient({});
   const {slug} = params;
-  const response = await prismic.getByUID('post', slug.toString());
+  const response = await prismic.getByUID('post', String(slug));
 
   const post = {
-    first_publication_date: format(
-      new Date(response.first_publication_date),
-      "dd MMM yyyy",
-      {
-        locale: ptBR,
-      }
-    ),
+    first_publication_date: response.first_publication_date,
     data: {
       title: response.data.title,
       banner:{
