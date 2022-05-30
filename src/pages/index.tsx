@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { FiCalendar, FiUser} from 'react-icons/fi';
 import { GiSadCrab } from 'react-icons/gi';
 import Link from 'next/link';
+import { Head } from 'next/document';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -49,39 +50,45 @@ export default function Home({postsPagination} : HomeProps) {
   }, [])
 
   return next_page ? (
+    
+    <>
+      <Head>
+        <title>Space traveling</title>
+      </Head>
 
-    <main className={commonStyles.container}>
-      {
-        allPages.results.map((post) => {
-          return(
-            <Link href={`/post/${post.uid}`} key={post.uid}>
-              <div className={styles.post} key={post.uid}>
-                <h1>{post.data.title}</h1>
-                <p>{post.data.subtitle}</p>
-                <section>
-                  <span>
-                    <FiCalendar className={commonStyles.icon} size={20}/> {format(
-                      new Date(post.first_publication_date),
-                      "dd MMM yyyy",
-                      {
-                        locale: ptBR
-                      }
-                    )}
-                  </span> 
+      <main className={commonStyles.container}>
+        {
+          allPages.results.map((post) => {
+            return(
+              <Link href={`/post/${post.uid}`} key={post.uid}>
+                <div className={styles.post} key={post.uid}>
+                  <h1>{post.data.title}</h1>
+                  <p>{post.data.subtitle}</p>
+                  <section>
+                    <span>
+                      <FiCalendar className={commonStyles.icon} size={20}/> {format(
+                        new Date(post.first_publication_date),
+                        "dd MMM yyyy",
+                        {
+                          locale: ptBR
+                        }
+                      )}
+                    </span> 
 
-                  <span>
-                    <FiUser className={commonStyles.icon} size={20}/> {post.data.author}
-                  </span>
-                </section>
-              </div>
-            </Link>
-          )
-        })
-      }
-      <div className={styles.load}>
-        <p onClick={() => handleLoadMore(next_page, setNewPage)}>Carregar mais posts</p>
-      </div>
-    </main>
+                    <span>
+                      <FiUser className={commonStyles.icon} size={20}/> {post.data.author}
+                    </span>
+                  </section>
+                </div>
+              </Link>
+            )
+          })
+        }
+        <div className={styles.load}>
+          <p onClick={() => handleLoadMore(next_page, setNewPage)}>Carregar mais posts</p>
+        </div>
+      </main>
+    </>
 
   ) : (
 
