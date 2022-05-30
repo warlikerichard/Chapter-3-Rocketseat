@@ -59,9 +59,6 @@ export default function Post({post} : PostProps) {
   return !router.isFallback ? (
 
     <div>
-      <Head>
-        <title>{post.data.title}</title>
-      </Head>
       <div className={styles.banner}>
         <img src={post.data.banner.url} alt="banner" width="100%"/>
       </div>
@@ -104,9 +101,6 @@ export default function Post({post} : PostProps) {
   ) : (
 
       <main className={commonStyles.container}>
-        <Head>
-          <title>{post.data.title}</title>
-        </Head>
         <div className={styles.loading}>
           <GiSadCrab size={65} className={commonStyles.icon} color='#FF57B2'/> Carregando...
         </div>
