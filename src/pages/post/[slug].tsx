@@ -11,7 +11,6 @@ import { GiSadCrab } from 'react-icons/gi';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { ptBR } from 'date-fns/locale';
 import { format } from 'date-fns';
-import  Head  from 'next/Head';
 
 interface Post {
   uid?: string
