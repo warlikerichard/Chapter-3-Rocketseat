@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { FiCalendar, FiUser} from 'react-icons/fi';
 import { GiSadCrab } from 'react-icons/gi';
 import Link from 'next/link';
+import Head from 'next/head';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -51,6 +52,9 @@ export default function Home({postsPagination} : HomeProps) {
   return next_page ? (
     
       <main className={commonStyles.container}>
+        <Head>
+          <title>spacetraveling ☄</title>
+        </Head>
         {
           allPages.results.map((post) => {
             return(
@@ -86,6 +90,9 @@ export default function Home({postsPagination} : HomeProps) {
   ) : (
 
     <main className={commonStyles.container}>
+      <Head>
+          <title>spacetraveling ☄</title>
+      </Head>
       {
         allPages.results.map((post) => {
           return(
