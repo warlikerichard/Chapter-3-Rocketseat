@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { FiCalendar, FiUser} from 'react-icons/fi';
 import { GiSadCrab } from 'react-icons/gi';
 import Link from 'next/link';
-import { Head } from 'next/document';
+import  Head  from 'next/Head';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -51,12 +51,10 @@ export default function Home({postsPagination} : HomeProps) {
 
   return next_page ? (
     
-    <>
-      <Head>
-        <title>Space traveling</title>
-      </Head>
-
       <main className={commonStyles.container}>
+        <Head>
+          <title>Space traveling</title>
+        </Head>
         {
           allPages.results.map((post) => {
             return(
@@ -88,11 +86,13 @@ export default function Home({postsPagination} : HomeProps) {
           <p onClick={() => handleLoadMore(next_page, setNewPage)}>Carregar mais posts</p>
         </div>
       </main>
-    </>
 
   ) : (
 
     <main className={commonStyles.container}>
+      <Head>
+        <title>Space traveling</title>
+      </Head>
       {
         allPages.results.map((post) => {
           return(
@@ -102,7 +102,13 @@ export default function Home({postsPagination} : HomeProps) {
                 <p>{post.data.subtitle}</p>
                 <section>
                   <span><FiCalendar className={commonStyles.icon} size={20}/>
-                  {post.first_publication_date}
+                  {format(
+                        new Date(post.first_publication_date),
+                        "dd MMM yyyy",
+                        {
+                          locale: ptBR
+                        }
+                      )}
                   </span>
 
                   <span><FiUser className={commonStyles.icon} size={20}/>

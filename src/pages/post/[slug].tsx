@@ -11,7 +11,7 @@ import { GiSadCrab } from 'react-icons/gi';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { ptBR } from 'date-fns/locale';
 import { format } from 'date-fns';
-import { Head } from 'next/document';
+import  Head  from 'next/Head';
 
 interface Post {
   uid?: string
@@ -104,10 +104,13 @@ export default function Post({post} : PostProps) {
   ) : (
 
       <main className={commonStyles.container}>
+        <Head>
+          <title>{post.data.title}</title>
+        </Head>
         <div className={styles.loading}>
           <GiSadCrab size={65} className={commonStyles.icon} color='#FF57B2'/> Carregando...
         </div>
-    </main>
+      </main>
 
   )
 }
